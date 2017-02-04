@@ -17,11 +17,88 @@
  defined('ABSPATH') or die("Cannot access directly.");
 
 /**
+ * Setup settings page
+ */
+function ep_synonyms_menu()
+{
+    $capability  = 'manage_options';
+
+    if (defined( 'EP_IS_NETWORK' ) && EP_IS_NETWORK) {
+        $capability  = 'manage_network';
+    }
+    add_submenu_page(
+            'elasticpress',
+            'ElasticPress Synonyms',
+            'Synonyms',
+            'manage_options',
+            'ep-synonyms',
+            'ep_synonyms_options_page'
+        );
+}
+
+function ep_synonyms_settings_init(  ) {
+    
+	register_setting( 'ep_synonyms', 'ep_synonyms_synonyms' ); 
+
+	add_settings_section(
+		'ep_synonyms_synonyms_section', 
+		__( 'Synonyms', 'wordpress' ), 
+		'ep_synonyms_settings_section_callback', 
+		'ep_synonyms'
+	);
+
+	add_settings_field( 
+		'ep_synonyms_synonyms', 
+		__( 'Insert your synonyms:', 'wordpress' ), 
+		'ep_synonyms_textarea_field_0_render', 
+		'ep_synonyms', 
+		'ep_synonyms_synonyms_section' 
+	);
+
+}
+
+
+function ep_synonyms_textarea_field_0_render(  ) { 
+
+	$options = get_option( 'ep_synonyms_synonyms' );
+	?>
+	<textarea cols='80' rows='5' name='ep_synonyms_synonyms'><?php echo $options; ?></textarea>
+	<?php
+
+}
+
+
+function ep_synonyms_settings_section_callback(  ) { 
+    echo __('Remember to reindex the posts after you finish modifying the synonyms.', 'wordpress');
+}
+
+
+function ep_synonyms_options_page(  ) { 
+
+	?>
+	<form action='options.php' method='post'>
+
+		<h2>ElasticPress Synonyms</h2>
+
+		<?php
+		settings_fields( 'ep_synonyms' );
+		do_settings_sections( 'ep_synonyms' );
+		submit_button();
+		?>
+
+	</form>
+	<?php
+
+}
+
+/**
  * Setup all module filters
  */
 function ep_synonyms_setup()
 {
     add_filter( 'ep_config_mapping', 'ep_synonyms_config_mapping' );
+    add_action( 'admin_menu', 'ep_synonyms_menu');
+    add_action( 'admin_init', 'ep_synonyms_settings_init' );
 }
 
 /**
@@ -52,10 +129,12 @@ function ep_synonyms_config_mapping($mapping)
         return false;
     }
 
+    $synonyms = get_option( 'ep_synonyms_synonyms' );
+    
     // define the custom filter
     $mapping['settings']['analysis']['filter']['secret_client_synonym_filter'] = array(
         'type' => 'synonym',
-        'synonyms_path' => 'analysis/synonym.txt',
+        'synonyms' => $synonyms
     );
 
     // tell the analyzer to use our newly created filter
