@@ -134,10 +134,11 @@ function ep_synonyms_config_mapping($mapping)
     // define the custom filter
     $mapping['settings']['analysis']['filter']['secret_client_synonym_filter'] = array(
         'type' => 'synonym',
-        'synonyms' => $synonyms
+        'synonyms' => preg_split('/$\R?^/m', $synonyms)
     );
 
     // tell the analyzer to use our newly created filter
+    $mapping['settings']['analysis']['analyzer']['default_search'] = $mapping['settings']['analysis']['analyzer']['default'];
     $mapping['settings']['analysis']['analyzer']['default']['filter'][] = 'secret_client_synonym_filter';
 
     // increase number of fields indexable
