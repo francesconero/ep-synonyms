@@ -152,7 +152,7 @@ function ep_synonyms_config_mapping($mapping)
  */
 function ep_synonyms_box_summary()
 {
-    echo '<p>' . esc_html_e( 'Enable synonyms queries.', 'ep-synonyms' ) . '</p>';
+    echo '<p>' . esc_html__( 'Enable synonyms queries.', 'ep-synonyms' ) . '</p>';
 }
 
 /**
@@ -160,7 +160,7 @@ function ep_synonyms_box_summary()
  */
 function ep_synonyms_box_long()
 {
-    echo '<p>' . esc_html_e( 'Important note: You should have a ELASTICSEARCH_CONFIG_FOLDER/analysis/synonyms.txt file present on every node of your Elasticsearch cluster, or the creation of the index will fail.', 'ep-synonyms' ) . '</p>';
+    echo '<p>' . esc_html__( 'Open the', 'ep-synonyms' ) . ' <strong>Synonyms</strong> ' . esc_html__('ElasticPress submenu to update the synonyms. Then reindex your posts.', 'ep-synonyms' ) . '</p>';
 }
 
 ep_register_module( 'ep_synonyms', array(
